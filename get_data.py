@@ -10,17 +10,19 @@ import requests
 from requests.exceptions import HTTPError
 
 BASE = "https://api.openf1.org/v1"
-SESSION_SCOPE = "RACE_SPRINT"   # "RACE" | "RACE_SPRINT" | "ALL"
+SESSION_SCOPE = "RACE_SPRINT"  # "RACE" | "RACE_SPRINT" | "ALL"
 INCLUDE_MEETINGS = True
-DOWNLOAD_LAPS = False
+DOWNLOAD_LAPS = True  # Changed from False to True
 TIMEOUT = 60
 RETRIES = 4
 BACKOFF = 2.0
 OUT_DIR = Path("data/openf1_full")
 OVERWRITE = True
 
+
 def mkdir(p: Path) -> None:
     p.mkdir(parents=True, exist_ok=True)
+
 
 def fetch_csv(endpoint: str, **params) -> pd.DataFrame:
     url = f"{BASE}/{endpoint}"
@@ -44,6 +46,7 @@ def fetch_csv(endpoint: str, **params) -> pd.DataFrame:
         time.sleep(BACKOFF ** a)
     raise RuntimeError(f"Request failed: {endpoint} {params} -> {err}")
 
+
 def available_years(start_from: int = 2018, end_to: Optional[int] = None) -> list[int]:
     end_to = end_to or datetime.utcnow().year
     yrs = []
@@ -55,6 +58,7 @@ def available_years(start_from: int = 2018, end_to: Optional[int] = None) -> lis
         except Exception:
             pass
     return yrs
+
 
 def filter_sessions(df: pd.DataFrame, scope: str) -> pd.DataFrame:
     if df.empty or scope == "ALL":
@@ -68,8 +72,9 @@ def filter_sessions(df: pd.DataFrame, scope: str) -> pd.DataFrame:
         if st is not None: m |= st.eq("R")
     if scope == "RACE_SPRINT":
         if sn is not None: m |= sn.str.contains("sprint", na=False)
-        if st is not None: m |= st.isin({"S","SPRINT"})
+        if st is not None: m |= st.isin({"S", "SPRINT"})
     return df.loc[m] if m.any() else df
+
 
 class CSVAgg:
     def __init__(self, path: Path):
@@ -77,10 +82,12 @@ class CSVAgg:
         if path.exists() and OVERWRITE:
             path.unlink()
         mkdir(path.parent)
+
     def append(self, df: pd.DataFrame) -> None:
         if df is None or df.empty: return
         self.path.write_text("") if not self.path.exists() else None
         df.to_csv(self.path, index=False, mode="a", header=not self._has_header())
+
     def _has_header(self) -> bool:
         try:
             with self.path.open("rb") as f:
@@ -88,23 +95,26 @@ class CSVAgg:
         except FileNotFoundError:
             return False
 
+
 def main() -> None:
     mkdir(OUT_DIR)
     years = available_years(2018, datetime.utcnow().year)
     if not years:
-        print("No available years detected.", file=sys.stderr); sys.exit(1)
+        print("No available years detected.", file=sys.stderr);
+        sys.exit(1)
     print(f"Detected years: {years}")
 
     aggs: Dict[str, Optional[CSVAgg]] = {
-        "sessions_all":  CSVAgg(OUT_DIR / "sessions_all.csv"),
-        "meetings_all":  CSVAgg(OUT_DIR / "meetings_all.csv") if INCLUDE_MEETINGS else None,
-        "stints":        CSVAgg(OUT_DIR / "stints_all.csv"),
-        "pit":           CSVAgg(OUT_DIR / "pit_all.csv"),
-        "weather":       CSVAgg(OUT_DIR / "weather_all.csv"),
+        "sessions_all": CSVAgg(OUT_DIR / "sessions_all.csv"),
+        "meetings_all": CSVAgg(OUT_DIR / "meetings_all.csv") if INCLUDE_MEETINGS else None,
+        "stints": CSVAgg(OUT_DIR / "stints_all.csv"),
+        "pit": CSVAgg(OUT_DIR / "pit_all.csv"),
+        "weather": CSVAgg(OUT_DIR / "weather_all.csv"),
         "starting_grid": CSVAgg(OUT_DIR / "starting_grid_all.csv"),
-        "session_result":CSVAgg(OUT_DIR / "session_result_all.csv"),
-        "race_control":  CSVAgg(OUT_DIR / "race_control_all.csv"),
-        "laps":          CSVAgg(OUT_DIR / "laps_all.csv") if DOWNLOAD_LAPS else None,
+        "session_result": CSVAgg(OUT_DIR / "session_result_all.csv"),
+        "race_control": CSVAgg(OUT_DIR / "race_control_all.csv"),
+        "laps": CSVAgg(OUT_DIR / "laps_all.csv"),  # Always create laps aggregator
+        "drivers": CSVAgg(OUT_DIR / "drivers_all.csv"),  # Added drivers endpoint
     }
 
     total_sessions = total_targets = 0
@@ -113,7 +123,8 @@ def main() -> None:
         try:
             sessions = fetch_csv("sessions", year=y)
         except Exception as e:
-            print(f"[{y}] sessions error: {e}", file=sys.stderr); continue
+            print(f"[{y}] sessions error: {e}", file=sys.stderr);
+            continue
         aggs["sessions_all"].append(sessions)
         if INCLUDE_MEETINGS and aggs["meetings_all"] is not None:
             try:
@@ -125,36 +136,39 @@ def main() -> None:
         tgt = filter_sessions(sessions, SESSION_SCOPE)
         total_targets += len(tgt)
         cols = {c.lower(): c for c in tgt.columns}
-        sk = cols.get("session_key","session_key")
+        sk = cols.get("session_key", "session_key")
         print(f"[{y}] sessions={len(sessions)} targets={len(tgt)}")
         for _, r in tgt.iterrows():
             try:
                 key = int(r[sk])
             except Exception:
                 continue
-            for ep, name in [("stints","stints"),("pit","pit"),("weather","weather"),
-                             ("starting_grid","starting_grid"),("session_result","session_result"),
-                             ("race_control","race_control")]:
+            # Core endpoints (always downloaded)
+            for ep, name in [("stints", "stints"), ("pit", "pit"), ("weather", "weather"),
+                             ("starting_grid", "starting_grid"), ("session_result", "session_result"),
+                             ("race_control", "race_control"), ("drivers", "drivers")]:
                 try:
                     df = fetch_csv(ep, session_key=key)
                     aggs[name].append(df)
                 except Exception as e:
                     print(f"  - [{y} SK={key}] {ep} warn: {e}", file=sys.stderr)
-            if DOWNLOAD_LAPS and aggs["laps"] is not None:
-                try:
-                    df = fetch_csv("laps", session_key=key)
-                    aggs["laps"].append(df)
-                except Exception as e:
-                    print(f"  - [{y} SK={key}] laps warn: {e}", file=sys.stderr)
+
+            # Laps endpoint (now always downloaded when DOWNLOAD_LAPS is True)
+            try:
+                df = fetch_csv("laps", session_key=key)
+                aggs["laps"].append(df)
+            except Exception as e:
+                print(f"  - [{y} SK={key}] laps warn: {e}", file=sys.stderr)
 
     print(f"Done. Years={years} total_sessions={total_sessions} targets_processed={total_targets}")
     print(f"Output: {OUT_DIR.resolve()}")
-    files = ["sessions_all.csv","meetings_all.csv" if INCLUDE_MEETINGS else None,
-             "stints_all.csv","pit_all.csv","weather_all.csv",
-             "starting_grid_all.csv","session_result_all.csv",
-             "race_control_all.csv","laps_all.csv" if DOWNLOAD_LAPS else None]
+    files = ["sessions_all.csv", "meetings_all.csv" if INCLUDE_MEETINGS else None,
+             "stints_all.csv", "pit_all.csv", "weather_all.csv",
+             "starting_grid_all.csv", "session_result_all.csv",
+             "race_control_all.csv", "laps_all.csv", "drivers_all.csv"]  # Always include laps and drivers
     for f in filter(None, files):
         print(f" - {f}")
+
 
 if __name__ == "__main__":
     main()

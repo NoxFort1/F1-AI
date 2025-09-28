@@ -5,8 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0cffe000-44d0-4605-bab9-c87f6039075e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/f1-v2.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/f1-v2.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/notebooks/02_viz.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/project.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/get_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/get_data.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/notebooks/01_eda.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/01_eda.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -68,7 +70,15 @@
       <updated>1758391503602</updated>
       <workItem from="1758391504663" duration="2741000" />
       <workItem from="1758483234332" duration="5369000" />
-      <workItem from="1758535950291" duration="5828000" />
+      <workItem from="1758535950291" duration="6012000" />
+      <workItem from="1758636517525" duration="4603000" />
+      <workItem from="1758649308933" duration="8805000" />
+      <workItem from="1758660039563" duration="1161000" />
+      <workItem from="1758661222124" duration="271000" />
+      <workItem from="1758717184742" duration="1977000" />
+      <workItem from="1758722150589" duration="4438000" />
+      <workItem from="1758732016385" duration="8831000" />
+      <workItem from="1759075181190" duration="10266000" />
     </task>
     <servers />
   </component>
@@ -76,6 +86,6 @@
     <option name="version" value="3" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/f1_v2$get_data.coverage" NAME="get_data Coverage Results" MODIFIED="1758394110461" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/f1_v2$get_data.coverage" NAME="get_data Coverage Results" MODIFIED="1759079959749" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
