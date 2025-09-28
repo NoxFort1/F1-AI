@@ -5,11 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0cffe000-44d0-4605-bab9-c87f6039075e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/notebooks/02_viz.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/notebooks/02_vis.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dictionaries/project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/project.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/get_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/get_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notebooks/01_eda.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/01_eda.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,7 +76,7 @@
       <workItem from="1758717184742" duration="1977000" />
       <workItem from="1758722150589" duration="4438000" />
       <workItem from="1758732016385" duration="8831000" />
-      <workItem from="1759075181190" duration="10266000" />
+      <workItem from="1759075181190" duration="13449000" />
     </task>
     <servers />
   </component>

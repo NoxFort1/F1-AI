@@ -1,12 +1,27 @@
 <component name="ProjectDictionaryState">
   <dictionary name="project">
     <words>
+      <w>bgcolor</w>
+      <w>edgecolor</w>
+      <w>facecolor</w>
       <w>figsize</w>
+      <w>gridcolor</w>
+      <w>gridwidth</w>
+      <w>hovermode</w>
+      <w>labelcolor</w>
+      <w>labelsize</w>
       <w>openf</w>
       <w>pitstops</w>
       <w>racectl</w>
       <w>safetycar</w>
+      <w>sauber</w>
+      <w>tickcolor</w>
+      <w>titlesize</w>
       <w>virtualsafetycar</w>
+      <w>xanchor</w>
+      <w>xaxis</w>
+      <w>ytick</w>
+      <w>zerolinecolor</w>
     </words>
   </dictionary>
 </component>
